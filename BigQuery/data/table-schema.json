@@ -1,0 +1,17 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "Name",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Age",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "Month",
+    "type": "String"
+  }
+]
