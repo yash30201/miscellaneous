@@ -14,6 +14,7 @@ use Google\Cloud\Datastore\DatastoreClient;
 class Test
 {
     private $datastore;
+    const NIGHTLY_PROJECT='hw-cloudv1-sdk';
 
     /**
      * This is my implementiation of Deletion queue
@@ -53,7 +54,8 @@ class Test
         $key = $this->getKey($kind, $this->entityCreationCount[$kind]);
         $task = $this->datastore->entity($key, [
             'number' => $this->entityCreationCount[$kind],
-            'title' => 'card-' . (string)($this->entityCreationCount[$kind])
+            'title' => 'card-' . (string)($this->entityCreationCount[$kind]),
+            'flag' => (($this->entityCreationCount[$kind] & 1 )? true : false)
         ]);
         $this->entityCreationCount[$kind]++;
         return $task;
@@ -101,21 +103,23 @@ class Test
         echo "Upserted {$count} entities.";
     }
 
-    public function insertEntity($task)
+    public function insertEntity($task, bool $toDelete = true)
     {
         // Inserts only if doesn't exists.
         $this->datastore->insert($task);
         $key = $task->key();
-        $this->deletionQueue[] = (function () use ($key) {
-            $this->datastore->delete($key);
-        });
+        if ($toDelete) {
+            $this->deletionQueue[] = (function () use ($key) {
+                $this->datastore->delete($key);
+            });
+        }
     }
 
-    public function insertEntities($entities)
+    public function insertEntities($entities, bool $toDelete = true)
     {
         $count = 0;
         foreach($entities as $entity) {
-            $this->insertEntity($entity);
+            $this->insertEntity($entity, $toDelete);
             ++$count;
         }
         echo "Inserted {$count} entities.";
@@ -161,9 +165,41 @@ class Test
         $this->datastore->delete($key);
     }
 
+    public function query1() {
+        // $query = $this->datastore->query()
+        // ->kind('General')
+        // ->setFilter(new CompositeFilter('AND', [
+        //     new PropertyFilter('number', '>', 2),
+        //     new PropertyFilter('number', '<', 8)
+        // ]));
+
+        $query = $this->datastore->query()
+            ->kind('General')
+            ->filter('number', '>', 2)
+            ->filter('number', '<', 8);
+
+        // $query = $this->datastore->gqlQuery(
+        //     'SELECT * FROM General WHERE number > 2 AND number < 8',
+        //     [
+        //         'allowLiterals' => true
+        //     ]
+        // );
+
+        $results = $this->datastore->runQuery($query);
+        foreach($results as $entity) {
+           echo PHP_EOL . $entity['number'];
+        }
+    }
+
     private function initiateOnce()
     {
         echo PHP_EOL;
+        // $this->datastore = new DatastoreClient([
+        //     'projectId' => self::NIGHTLY_PROJECT,
+        //     'namespaceId' => uniqid(
+        //         '007-yash-'
+        //     )
+        // ]);
         $this->datastore = new DatastoreClient();
         $this->entityCreationCount['General'] = 1;
     }
@@ -208,11 +244,13 @@ $test = new Test();
  */
 
 // Inserting multiple entities
-$entities = $test->getDummyEntities(3);
-$test->insertEntities($entities);
-$keys = $test->getKeysFromEntities($entities);
-$entities = $test->getEntities($keys);
-foreach($entities['found'] as $entity) {
-    print_r($entity->get());
-}
+// $entities = $test->getDummyEntities(10);
+// $test->insertEntities($entities, false);
+// $keys = $test->getKeysFromEntities($entities);
+// $entities = $test->getEntities($keys);
+// foreach($entities['found'] as $entity) {
+//     print_r($entity->get());
+// }
 
+//Query
+$test->query1();
