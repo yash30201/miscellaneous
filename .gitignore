@@ -1,3 +1,4 @@
-/vendor
-/data
+vendor/
+data/
+secret/
 bfg.jar
