@@ -18,14 +18,14 @@ use Google\Protobuf\Timestamp;
 $client = new BigQueryReadClient();
 
 
-$project = $client->projectName('bigquery-public-data');
+$project = $client->projectName('yashsahu-dev-test');
 
 $table = $client->tableName('bigquery-public-data', 'usa_names', 'usa_1910_current');
 
 $snapshotMillis = null;
 $readOptions = new TableReadOptions();
-$readOptions->setRowRestriction('state = "WA"');
 $readOptions->setSelectedFields(['name', 'number', 'state']);
+$readOptions->setRowRestriction('state = "WA"');
 
 $readSession = new ReadSession();
 $readSession->setTable($table)
@@ -50,13 +50,25 @@ $session = $client->createReadSession(
     ]
 );
 
-$stream = $client->readRows([
-    'readStream' => $session->getStreams()[0]->getName()
-]);
+$stream = $client->readRows($session->getStreams()[0]->getName());
 
+$schema = '';
 foreach ($stream->readAll() as $response) {
+    $data = $response->getAvroRows()->getSerializedBinaryRows();
+    if ($response->hasAvroSchema()) {
+        $schema = $response->getAvroSchema()->getSchema();
+    }
+    // printf("Rows Count: %d\n", $response->getRowCount());
+    $avroSchema = AvroSchema::parse($schema);
+    $readIO = new \AvroStringIO($data);
+    $datumReader = new \AvroIODatumReader($avroSchema);
+    $record = [];
+    while (!$readIO->is_eof()) {
+        $record[] = $datumReader->read(new \AvroIOBinaryDecoder($readIO));
+    }
     printf(
-        'Discovered %s rows in response.' . PHP_EOL,
-        $response->getRowCount()
+        "Matched: %s\n",
+        count($record) == $response->getRowCount() ? 'True' : 'False'
     );
+    // break;
 }
