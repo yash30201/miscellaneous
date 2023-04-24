@@ -2,3 +2,4 @@ vendor/
 data/
 secret/
 bfg.jar
+composer.lock
