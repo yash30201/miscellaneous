@@ -1,0 +1,5 @@
+indexes:
+- kind: General
+  properties:
+    - name: title
+    - name: number
