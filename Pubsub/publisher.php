@@ -58,9 +58,9 @@ class Publisher
         //     printf('Published message' . PHP_EOL);
         // }
 
-        $messageCount = 20000;
+        $messageCount = 1000;
         $starttime = microtime(true);
-        $input = file_get_contents('data/data1');
+        $input = file_get_contents('data/data0');
         $messageArray = $this->formMessage($input);
         while ($messageCount--) {
             $topic->publish($messageArray);
@@ -100,20 +100,20 @@ class Publisher
         $topic->subscription('bloom-sub');
     }
 
-    public function sendPublishRequests($client, int $count = 1, string $filename = 'data/data1')
+    public function sendPublishRequests($client, int $count = 1, string $filename = 'bigData/data4')
     {
         $contents = file_get_contents($filename);
         $message = $this->formMessage($contents);
 
         $name = 'bloom';
         $topic = $client->topic($name);
-        $starttime = microtime(true);
+        // $starttime = microtime(true);
         for ($_ = 0 ; $_ < $count ; $_++) {
             $topic->publish($message);
         }
-        $endtime = microtime(true);
-        $timediff = $endtime - $starttime;
-        printf($timediff / $count * 100 . ' ');
+        // $endtime = microtime(true);
+        // $timediff = $endtime - $starttime;
+        // printf('Time taken is: ' . $timediff . PHP_EOL);
     }
 
 

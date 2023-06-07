@@ -1,0 +1,7 @@
+FROM gcr74:latest
+WORKDIR /var/www/http
+COPY . ./
+ENTRYPOINT ["/bin/bash"]
+
+
+Jun 07 11:29:33 php-pubsub-testing-1-autostart-1 konlet-startup[526]: 2023/06/07 11:29:33 Error: Failed to start container: Error response from daemon: {"message":"manifest for asia-so>
