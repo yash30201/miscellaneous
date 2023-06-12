@@ -33,7 +33,7 @@ class Publisher
         for ($_ = 0 ; $_ < $count ; $_++) {
             $topic->publish($message);
             usleep(10);
-            $messages = $subscriber->pull();
+            $messages = $subscriber->pull(['maxMessages' => 1]);
             $subscriber->acknowledgeBatch($messages);
         }
     }
