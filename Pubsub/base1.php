@@ -10,8 +10,8 @@ require __DIR__ . '/../vendor/autoload.php';
 class Base
 {
     private $client;
-    const TOPIC = 'alpha001';
-    const SUBSCRIPTION = 'alpha001-sub';
+    const TOPIC = 'bloom';
+    const SUBSCRIPTION = 'bloom-sub';
 
     public function __construct()
     {
@@ -107,13 +107,15 @@ class Base
 $pubsub = new Base();
 $topic = $pubsub->getTopic(Base::TOPIC);
 
-// $pubsub->publishMessage($topic, [
-//     'data' => 'My Third Message.',
-//     'attributes' => [
-//         'feeling' => 'Happy!'
-//     ]
-// ]);
-// $subscription = $pubsub->getSubsciption(Base::SUBSCRIPTION);
+$pubsub->publishMessage($topic, [
+    'data' => 'My Third Message.',
+    'attributes' => [
+        'feeling' => 'Happy!'
+    ]
+]);
+$subscription = $pubsub->getSubsciption(Base::SUBSCRIPTION);
+$message = $subscription->pull();
+$subscription->acknowledge($message[0]);
 // $messages = $pubsub->getAllAvailableMessages($subscription);
 // $pubsub->printMessages($messages);
 

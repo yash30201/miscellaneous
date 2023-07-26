@@ -1,9 +1,9 @@
 <?php
 
-if (!isset($argc) || $argc != 2) {
-    echo "Please enter the name of the file to publish.\n";
-    exit;
-}
+// if (!isset($argc) || $argc != 2) {
+//     echo "Please enter the name of the file to publish.\n";
+//     exit;
+// }
 
 use Google\Cloud\PubSub\PubSubClient;
 
@@ -12,23 +12,27 @@ class Publisher
 {
     private const MINUTE_LOOP = 60000;
 
-    public function __construct($fileName)
+    public function __construct()
     {
         $client = new PubSubClient([
             'projectId' => 'yashsahu-dev-test'
         ]);
-        $this->sendPublishRequestsAndPull($client, self::MINUTE_LOOP, $fileName);
+        // $this->sendPublishRequestsAndPull($client, self::MINUTE_LOOP, $fileName);
         // $this->sendPublishRequestsAndPull($client, 1, $fileName);
+        $this->sendPublishRequestsAndPull($client, 1);
     }
 
     public function sendPublishRequestsAndPull($client, int $count = 1, string $filename = 'data/data7')
     {
-        $contents = file_get_contents($filename);
-        $message = $this->formMessage($contents);
+        // $contents = file_get_contents($filename);
+        // $message = $this->formMessage($contents);
+        $message = $this->formMessage('Hellondjkswqqweankjdnas,mnfkjbsajkfnjkasbjhkdbasjhkfb dfksabdkjbasjkbdfj kabdkhdasdasdasdfedgfqeg43fbasjkdbj kabsdjkb, ellondjkswqqweankjdnas,mnfkjbsajkfnjkasbjhkdbasjhkfb dfksabdkjbasjkbdfj kabdkhdasdasdasdfedgfqeg43fbasjkdbj kabsdjkbellondjkswqqweankjdnas,mnfkjbsajkfnjkasbjhkdbasjhkfb dfksabdkjbasjkbdfj kabdkhdasdasdasdfedgfqeg43fbasjkdbj kabsdjkbellondjkswqqweankjdnas,mnfkjbsajkfnjkasbjhkdbasjhkfb dfksabdkjbasjkbdfj kabdkhdasdasdasdfedgfqeg43fbasjkdbj kabsdjkbellondjkswqqweankjdnas,mnfkjbsajkfnjkasbjhkdbasjhkfb dfksabdkjbasjkbdfj kabdkhdasdasdasdfedgfqeg43fbasjkdbj kabsdjkbellondjkswqqweankjdnas,mnfkjbsajkfnjkasbjhkdbasjhkfb dfksabdkjbasjkbdfj kabdkhdasdasdasdfedgfqeg43fbasjkdbj kabsdjkb');
 
         $topicName = 'bloom'; // Already exists
         $subscriptionName = 'bloom-sub'; // Already exists
-        $topic = $client->topic($topicName);
+        $topic = $client->topic($topicName, [
+            'enableCompression' => true
+        ]);
         $subscriber = $client->subscription($subscriptionName);
         for ($_ = 0 ; $_ < $count ; $_++) {
             $topic->publish($message);
@@ -45,4 +49,5 @@ class Publisher
     }
 }
 
-$object = new Publisher($argv[1]);
+// $object = new Publisher($argv[1]);
+$object = new Publisher();

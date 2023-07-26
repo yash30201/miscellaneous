@@ -1,0 +1,20 @@
+{
+    "name": "yashsahu/core-batch",
+    "description": "Test module for exploring batching provided by core",
+    "type": "project",
+    "require": {
+        "google/cloud-core": "^1.52",
+        "symfony/process": "^6.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Yashsahu\\CoreBatch\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "yash30201",
+            "email": "54198301+yash30201@users.noreply.github.com"
+        }
+    ]
+}

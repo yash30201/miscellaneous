@@ -17,6 +17,7 @@ function data_delete_collection()
         while (!$documents->isEmpty()) {
             foreach ($documents as $document) {
                 $document->reference()->delete();
+                echo "$documentsCount" . PHP_EOL;
                 ++$documentsCount;
             }
             $documents = $collection->limit($batchSize)->documents();
